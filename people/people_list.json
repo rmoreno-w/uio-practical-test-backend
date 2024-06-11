@@ -1,0 +1,6 @@
+{
+    "data": [
+        { "name": "Trymbi", "year_of_birth": "1996", "email": "trymbi@uio.co", "password": "trymbi123" },
+        { "name": "Trancy", "year_of_birth": "2005", "email": "trancy@uio.dept.co", "password": "tracy123" }
+    ]
+}

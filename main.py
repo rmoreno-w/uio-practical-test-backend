@@ -1,14 +1,9 @@
-from flask import Flask, jsonify, request
+from flask import Flask
+
+from people.people import people
 
 app = Flask(__name__)
-
-@app.route("/")
-def root():
-    data = {
-        "message": "Hello World"
-    }
-
-    return jsonify(data), 200
+app.register_blueprint(people, url_prefix='/people')
 
 if __name__ == '__main__':
     app.run(debug=True)
