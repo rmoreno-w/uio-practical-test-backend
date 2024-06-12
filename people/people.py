@@ -82,6 +82,7 @@ def create_user():
                 "year_of_birth": year_of_birth
             })
             json_file.seek(0,0)
+            json_file.truncate()
             json.dump(json_data, json_file, indent=4)
 
             return jsonify({"message": "User created successfully"}), 200
@@ -128,6 +129,7 @@ def modificate_user():
                         
                         if (name or year_of_birth):
                             json_file.seek(0,0)
+                            json_file.truncate()
                             json.dump(json_data, json_file, indent=4)
                             return jsonify({"message": "User edited successfully"}), 200
 
