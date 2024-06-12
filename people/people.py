@@ -70,6 +70,11 @@ def create_user():
     try:    
         with open(json_uri, 'r+') as json_file:
             json_data = json.load(json_file)
+
+            for person in json_data["data"]:
+                if person["email"] == email:
+                    return jsonify({"message": "This email is already being used by another user."}), 400
+                
             json_data["data"].append({
                 "name": name,
                 "email": email, 
