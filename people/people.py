@@ -1,19 +1,18 @@
 import os
 
-from flask import Blueprint, json, jsonify
+from flask import Blueprint, json, jsonify, request
 
 people = Blueprint("people", __name__)
+
+current_folder_path = os.path.realpath(os.path.dirname(__file__))
+json_uri = os.path.join(current_folder_path, "people_list.json")
 
 # Lists all of the current users
 @people.route("/", methods=["GET"])
 def list_users():
-    current_folder_path = os.path.realpath(os.path.dirname(__file__))
-    json_uri = os.path.join(current_folder_path, "people_list.json")
-    
     try:
         with open(json_uri, 'r') as json_file:
             json_data = json.load(json_file)
-            print(type(json_data))
     # If the file with the data is not found
     except:
         json_data = {
@@ -31,13 +30,9 @@ def list_users():
 # Query user by email
 @people.route("/<email>", methods=["GET"])
 def find_user(email):
-    current_folder_path = os.path.realpath(os.path.dirname(__file__))
-    json_uri = os.path.join(current_folder_path, "people_list.json")
-    
     try:
         with open(json_uri, 'r') as json_file:
             json_data = json.load(json_file)
-            print(type(json_data))
     # If the file with the data is not found
     except:
         json_data = {
@@ -56,4 +51,35 @@ def find_user(email):
 
 
 
+# Creating New User
+@people.route("/create", methods=["POST"])
+def create_user():
+    # If the request has data
+    new_user_data = request.get_json()
 
+    # Checking if all necessary data was sent
+    try:
+        name = new_user_data["name"]
+        email = new_user_data["email"]
+        password = new_user_data["password"]
+        year_of_birth = new_user_data["year_of_birth"]
+    except:
+        return jsonify({"message": "You must include a name, email, password and year of birth"}), 400
+
+
+    try:    
+        with open(json_uri, 'r+') as json_file:
+            json_data = json.load(json_file)
+            json_data["data"].append({
+                "name": name,
+                "email": email, 
+                "password": password,
+                "year_of_birth": year_of_birth
+            })
+            json_file.seek(0,0)
+            json.dump(json_data, json_file, indent=4)
+
+            return jsonify({"message": "User created successfully"}), 200
+
+    except:
+        return jsonify({"message": "Could not save the user data, please try again in a few seconds"}), 400
