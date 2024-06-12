@@ -83,3 +83,52 @@ def create_user():
 
     except:
         return jsonify({"message": "Could not save the user data, please try again in a few seconds"}), 400
+
+
+
+
+# Modification of a User
+@people.route("/edit", methods=["PATCH"])
+def modificate_user():
+    # If the request has data
+    new_user_data = request.get_json()
+
+    try:
+        name = new_user_data["name"]
+    except:
+        name = ''
+
+    try:
+        year_of_birth = new_user_data["year_of_birth"]
+    except:
+        year_of_birth = ''
+
+
+    try:
+        email = new_user_data["email"]
+        password = new_user_data["password"]
+
+        with open(json_uri, 'r+') as json_file:
+            json_data = json.load(json_file)
+        
+            # Checking if email and password are correct
+            for person in json_data["data"]:
+                if person["email"] == email:
+                    if person["password"] == password:
+                        # Only editing data if it wasnt empty (trying to allow one of these as empty fields)
+                        if name:
+                            person["name"] = name
+                        if year_of_birth:
+                            person["year_of_birth"] = year_of_birth
+                        
+                        if (name or year_of_birth):
+                            json_file.seek(0,0)
+                            json.dump(json_data, json_file, indent=4)
+                            return jsonify({"message": "User edited successfully"}), 200
+
+
+            # If the for loop is over and the method did not return, user was not found or password did not match
+            return jsonify({"message": "User not found or incorrect password"}), 400
+
+    except:
+        return jsonify({"message": "You must include at least a valid password and email for an user thats already registered"}), 400
