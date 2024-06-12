@@ -28,7 +28,7 @@ def list_users():
 
 
 # Query user by email
-@people.route("/<email>", methods=["GET"])
+@people.route("/find/<email>", methods=["GET"])
 def find_user(email):
     try:
         with open(json_uri, 'r') as json_file:
